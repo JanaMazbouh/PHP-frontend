@@ -6,7 +6,11 @@
     
     
     <title>Smart Pantry Chef</title>
+<<<<<<< HEAD
     <link rel="icon" type="image/png" href="/Applications/XAMPP/xamppfiles/htdocs/PHP-frontend/logo.png"/>
+=======
+    <link rel="icon" type="image/png" href="/Users/batoul/PHP-frontend-1/logo.png"/>
+>>>>>>> 221c23183e37a9bdf17ec25e909eba53ac5bf5ec
 
     
 
@@ -96,7 +100,11 @@
 
 <body>
       <div class="logo">
+<<<<<<< HEAD
        <img src="logo.png" alt="logo">
+=======
+        <img src="/Users/batoul/PHP-frontend-1/logo.png" alt="logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+>>>>>>> 221c23183e37a9bdf17ec25e909eba53ac5bf5ec
     </div>
 
     <div id="slogan"></div>
