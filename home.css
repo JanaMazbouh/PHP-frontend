@@ -1,0 +1,116 @@
+    * {
+        box-sizing: border-box;
+    }
+    
+     :root {
+        --pink: #f07b8f;
+        --bg: #fff6f8;
+        --card: #fff;
+        --text: #222;
+    }
+    
+    body {
+        font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        background: linear-gradient(180deg, #fff, #fff6f8 200px);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        line-height: 1.4;
+    }
+    
+    .container {
+        max-width: 980px;
+        margin: 18px auto;
+        padding: 12px
+    }
+    
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+    
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        ;
+        padding: 15px 40px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    nav a {
+        margin-left: 12px;
+        text-decoration: none;
+        color: #666;
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+    
+    nav a.active,
+    nav a:hover {
+        background: var(--pink);
+        color: #fff;
+    }
+    /* Headings */
+    
+    h1 {
+        text-align: center;
+        margin: 30px 0 20px;
+        color: black;
+    }
+    
+    h3 {
+        margin: 20px 0 10px;
+        color: black;
+    }
+    /* Categories */
+    
+    div>a button {
+        background: var(--pink);
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        margin: 5px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    
+    div>a button:hover {
+        background: black;
+        color: var(--pink);
+    }
+    /* Recipe Cards */
+    
+    div[style*="flex"] {
+        justify-content: flex-start;
+    }
+    
+    div[style*="border"] {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    div[style*="border"]:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    div[style*="border"] h4 {
+        margin: 10px 0;
+        color: black;
+    }
+    
+    div[style*="border"] a {
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: none;
+        color: #e0677a;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
