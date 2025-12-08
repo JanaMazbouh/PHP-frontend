@@ -9,10 +9,18 @@ if(!isset($_SESSION['id_user'])){
 
 $id_user = $_SESSION['id_user'];
 
+/* ------- ADD TO FAVORITE -------- */
+if(isset($_GET['id_recipe'])){
+    $id_recipe = intval($_GET['id_recipe']);
+    $sq = "INSERT INTO favorite (id_user, id_recipe, add_date) 
+           VALUES ('$id_user', '$id_recipe', NOW())";
+    mysqli_query($con, $sq);
+}
+
 /* ------- DELETE FROM FAVORITE -------- */
 if(isset($_GET['remove'])){
-    $id_fav = $_GET['remove'];
-    mysqli_query($con, "DELETE FROM favorites WHERE id_fav='$id_fav' AND id_user='$id_user'");
+    $id_fav = intval($_GET['remove']);
+    mysqli_query($con, "DELETE FROM favorite WHERE id_fav='$id_fav' AND id_user='$id_user'");
     header("Location: favorite.php");
     exit();
 }
@@ -39,17 +47,16 @@ $result = mysqli_query($con, $query);
 
 <div class="container">
     <header>
-       
         <nav class="navbar">
-     <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">         
-             <a href="home.php">Home</a>
-             <a href="meals.php">Meals</a>
+            <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">          
+            <a href="home.php">Home</a>
+            <a href="meals.php">Meals</a>
             <a href="categories.php">Categories</a>
             <a href="recipes.php">Recipes</a>
             <a href="matching.php">Matching</a>
-         <a href="budget.php">Budget</a>
-           <a href="mood.php" >Mood</a>
-           <a href="history.php">History</a>
+            <a href="budget.php">Budget</a>
+            <a href="mood.php">Mood</a>
+            <a href="history.php">History</a>
             <a href="favorite.php" class="active">Favorites</a>
         </nav>
     </header>
@@ -62,10 +69,10 @@ $result = mysqli_query($con, $query);
             while($row = mysqli_fetch_assoc($result)){
         ?>
         <div class="card">
-            <img src="uploads/<?php echo $row['image']; ?>" class="img">
+            <img src="Image project/<?php echo $row['image']; ?>" class="img">
 
             <div class="info">
-                <h3><?php echo $row['name']; ?></h3>
+                <h3><?php echo $row['name_recipe']; ?></h3>
                 <p>Added on: <?php echo $row['add_date']; ?></p>
             </div>
 

@@ -2,7 +2,6 @@
 session_start();
 include 'db.php';
 
-
 $cat_sql = "SELECT * FROM categories";
 $categories = mysqli_query($con, $cat_sql);
 
@@ -20,27 +19,24 @@ $recipes = mysqli_query($con, $recipe_sql);
 
 <div class="container">
     <header>
-       
         <nav class="navbar">
-     <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">         
-             <a href="home.php" class="active">Home</a>
-             <a href="meals.php">Meals</a>
+            <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">          
+            <a href="home.php" class="active">Home</a>
+            <a href="meals.php">Meals</a>
             <a href="categories.php">Categories</a>
             <a href="recipes.php">Recipes</a>
-            <a  href="matching.php">Matching</a>
-         <a href="budget.php">Budget</a>
-           <a href="mood.php">Mood</a>
-           <a href="history.php">History</a>
+            <a href="matching.php">Matching</a>
+            <a href="budget.php">Budget</a>
+            <a href="mood.php">Mood</a>
+            <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
         </nav>
     </header>
 
     <hr>
 
-   
     <h1>Discover Delicious Recipes</h1>
 
-   
     <h3>Categories</h3>
     <div>
         <?php
@@ -60,7 +56,6 @@ $recipes = mysqli_query($con, $recipe_sql);
 
     <hr>
 
-   
     <h3>All Recipes</h3>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; max-width:900px;">
@@ -79,6 +74,12 @@ $recipes = mysqli_query($con, $recipe_sql);
                      alt="<?php echo $row['name_recipe']; ?>" 
                      style="width:100%; height:150px; object-fit:cover;">
 
+                <!-- Add to Favorite -->
+                <a href="favorite.php?id_recipe=<?php echo $row['id_recipe']; ?>">❤️</a>
+
+                <!-- Add to History -->
+                <a href="history.php?id_recipe=<?php echo $row['id_recipe']; ?>">👁️</a><br>
+
                 <h4><?php echo $row['name_recipe']; ?></h4>
                 
                 <?php if($row['health_type'] == 1){ ?>
@@ -95,7 +96,6 @@ $recipes = mysqli_query($con, $recipe_sql);
             echo "No recipes found.";
         }
         ?>
-
     </div>
 </div>
 </body>

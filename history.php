@@ -11,15 +11,15 @@ $id_user = $_SESSION['id_user'];
 
 /* ------- DELETE FROM HISTORY -------- */
 if(isset($_GET['remove'])){
-    $id_hist = $_GET['remove'];
-    mysqli_query($con, "DELETE FROM history WHERE id_history='$id_hist' AND id_user='$id_user'");
+    $id_history = intval($_GET['remove']);
+    mysqli_query($con, "DELETE FROM history WHERE id_history='$id_history' AND id_user='$id_user'");
     header("Location: history.php");
     exit();
 }
 
 /* ------- GET ALL HISTORY DATA -------- */
 $query = "
-SELECT history.id_history, history.date, recipes.name_recipe, recipes.image 
+SELECT history.id_history, history.date, recipes.id_recipe, recipes.name_recipe, recipes.image 
 FROM history
 JOIN recipes ON history.id_recipe = recipes.id_recipe
 WHERE history.id_user = '$id_user'
@@ -38,17 +38,16 @@ $result = mysqli_query($con, $query);
 <body>
 <div class="container">
     <header>
-       
         <nav class="navbar">
-     <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">         
-             <a href="home.php">Home</a>
-             <a href="meals.php">Meals</a>
+            <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">          
+            <a href="home.php">Home</a>
+            <a href="meals.php">Meals</a>
             <a href="categories.php">Categories</a>
             <a href="recipes.php">Recipes</a>
             <a href="matching.php">Matching</a>
-         <a href="budget.php">Budget</a>
-           <a href="mood.php">Mood</a>
-           <a href="history.php" class="active">History</a>
+            <a href="budget.php">Budget</a>
+            <a href="mood.php">Mood</a>
+            <a href="history.php" class="active">History</a>
             <a href="favorite.php">Favorites</a>
         </nav>
     </header>
@@ -64,11 +63,14 @@ $result = mysqli_query($con, $query);
             <img src="Image project/<?php echo $row['image']; ?>" class="img">
 
             <div class="info">
-                <h3><?php echo $row['name']; ?></h3>
+                <h3><?php echo $row['name_recipe']; ?></h3>
                 <p>Viewed on: <?php echo $row['date']; ?></p>
             </div>
 
-            <a href="history.php?remove=<?php echo $row['id_hist']; ?>" class="remove">✖</a>
+            
+            <a href="history.php?remove=<?php echo $row['id_history']; ?>" class="remove">✖</a>
+
+            <a href="recipe.php?id=<?php echo $row['id_recipe']; ?>" class="view">View Recipe</a>
         </div>
         <?php }} else { ?>
 

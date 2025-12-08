@@ -6,12 +6,14 @@ if(!isset($_SESSION['id_user'])){
     header("Location: login.php");
     exit();
 }
-if(!isset($_GET['id_meal'])){
-    die("Meal type not specified.");
+
+if(isset($_GET['id_meal'])){
+    $meal_id = intval($_GET['id_meal']);
+    $qr = "SELECT * FROM categories WHERE id_meal='$meal_id'";
+} else {
+    $qr = "SELECT * FROM categories";
 }
-$meal_id = intval($_GET['id_meal']);
-$qr="SELECT * FROM categories WHERE id_meal='$meal_id'";
-$res=mysqli_query($con, $qr);
+$res = mysqli_query($con, $qr);
 
 ?>
 <!DOCTYPE html>
@@ -24,32 +26,37 @@ $res=mysqli_query($con, $qr);
 </head>
 <body>
     <div class="container">
-    <header>
-        <nav class="navbar">
-          <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">  
-              <a href="home.php">Home</a>
-             <a href="meals.php">Meals</a>
-            <a href="categories.php" class="active">Categories</a>
-            <a href="recipes.php">Recipes</a>
-            <a  href="matching.php">Matching</a>
-         <a href="budget.php">Budget</a>
-           <a href="mood.php">Mood</a>
-           <a href="history.php">History</a>
-            <a href="favorite.php">Favorites</a>
-        </nav>
-    </header>
-    <hr>
+        <header>
+            <nav class="navbar">
+                <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;">  
+                <a href="home.php">Home</a>
+                <a href="meals.php">Meals</a>
+                <a href="categories.php" class="active">Categories</a>
+                <a href="recipes.php">Recipes</a>
+                <a href="matching.php">Matching</a>
+                <a href="budget.php">Budget</a>
+                <a href="mood.php">Mood</a>
+                <a href="history.php">History</a>
+                <a href="favorite.php">Favorites</a>
+            </nav>
+        </header>
+        <hr>
+
+        <h2>Categories</h2>
+
         <div class="cards">
             <?php
-            if(mysqli_num_rows($res)>0){
-            while($row=mysqli_fetch_array($res)){
-                ?>
+            if(mysqli_num_rows($res) > 0){
+                while($row = mysqli_fetch_assoc($res)){
+            ?>
                 <a href="recipes.php?id_category=<?php echo $row['id_category']; ?>" class="card">
-                    <p><?php echo $row['name_category']; ?></p>
+                    <p><?php echo htmlspecialchars($row['name_category']); ?></p>
                 </a>
-    
-                <?php
-            }}
+            <?php
+                }
+            } else {
+                echo "<p style='text-align:center; color:#555;'>No categories found for this meal.</p>";
+            }
             ?>
         </div>
     </div>
