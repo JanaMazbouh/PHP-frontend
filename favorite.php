@@ -58,6 +58,7 @@ $result = mysqli_query($con, $query);
             <a href="mood.php">Mood</a>
             <a href="history.php">History</a>
             <a href="favorite.php" class="active">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 <hr>

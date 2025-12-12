@@ -40,6 +40,7 @@ $recipeResult = mysqli_query($con, $recipeQuery);
             <a href="mood.php">Mood</a>
             <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 
@@ -49,6 +50,7 @@ $recipeResult = mysqli_query($con, $recipeQuery);
         <form method="get">
             <input type="text" class="search-box" name="search" placeholder="Search recipe..." value="<?php echo $searchTerm; ?>">
             <button class="search-btn">Search</button>
+         <h4>   <a href="add_recipe.php" class="btn">Add Your Recipe</a><br></h4>
         </form>
     </div>
 
@@ -59,7 +61,15 @@ $recipeResult = mysqli_query($con, $recipeQuery);
                 $img = "Image project/" . $recipe['image'];
         ?>
             <a href="recipe_detail.php?id_recipe=<?php echo $recipe['id_recipe']; ?>" class="card">
+    <div class="image-box">
                 <img src="<?php echo $img; ?>" alt="<?php echo $recipe['name_recipe']; ?>">
+         <div class="rating"  >
+               <?php
+    $stars = round($recipe['rating']); 
+    for($i=1; $i<=5; $i++){
+        echo $i <= $stars ? "⭐" : " ";
+    }
+    ?></div></div>
                 <h4><?php echo $recipe['name_recipe']; ?></h4>
                 <div class="details-box">
                     <span>
@@ -73,6 +83,7 @@ $recipeResult = mysqli_query($con, $recipeQuery);
                     </span>
                     <span>🔥 <?php echo $recipe['calories']; ?> kcal</span>
                 </div>
+                
             </a>
         <?php
             }

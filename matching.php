@@ -2,6 +2,11 @@
 session_start();
 include 'db.php'; 
 
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
 function clean($s) {
     return trim(htmlspecialchars($s, ENT_QUOTES, 'UTF-8'));
 }
@@ -115,6 +120,7 @@ if (isset($_POST['submit'])) {
            <a href="mood.php">Mood</a>
            <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 <hr>
@@ -157,7 +163,7 @@ if (isset($_POST['submit'])) {
                             <h4><?= htmlspecialchars($r['name_recipe']) ?></h4>
                             <p class="meta">Matches: <?= (int)$r['matches'] ?> — Time: <?= htmlspecialchars($r['time_needed']) ?></p>
               <p class="desc"><?= nl2br(htmlspecialchars(substr($r['description'],0,200))) ?><?php if (strlen($r['description'])>200) echo '...'; ?></p>
-                            <a class="view" href="recipe.php?id=<?= (int)$r['id_recipe'] ?>">View recipe</a>
+                            <a class="view" href="recipe_detail.php?id_recipe=<?= (int)$r['id_recipe'] ?>">View recipe</a>
                         </article>
                     <?php endforeach; ?>
                 </div>

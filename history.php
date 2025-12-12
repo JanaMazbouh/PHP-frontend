@@ -49,6 +49,7 @@ $result = mysqli_query($con, $query);
             <a href="mood.php">Mood</a>
             <a href="history.php" class="active">History</a>
             <a href="favorite.php">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 <hr>
@@ -70,7 +71,7 @@ $result = mysqli_query($con, $query);
             
             <a href="history.php?remove=<?php echo $row['id_history']; ?>" class="remove">✖</a>
 
-            <a href="recipe.php?id=<?php echo $row['id_recipe']; ?>" class="view">View Recipe</a>
+            <a href="recipe_detail.php?id_recipe=<?php echo $row['id_recipe']; ?>" class="view">View Recipe</a>
         </div>
         <?php }} else { ?>
 

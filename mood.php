@@ -2,6 +2,11 @@
 session_start();
 include 'db.php';
 
+if (!isset($_SESSION['id_user'])) {
+    header("Location: login.php");
+    exit;
+}
+
 $mood_sql = "SELECT * FROM mood";
 $mood_result = mysqli_query($con, $mood_sql);
 
@@ -38,6 +43,7 @@ if ($selected_mood) {
            <a href="mood.php" class="active">Mood</a>
            <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 
@@ -91,7 +97,7 @@ if ($selected_mood) {
                     <?php } ?>
 
                     <br><br>
-                    <a href="recipe.php?id=<?php echo $row['id_recipe']; ?>">View Recipe</a>
+                    <a href="recipe_detail.php?id_recipe=<?php echo $row['id_recipe']; ?>">View Recipe</a>
                 </div>
 
             <?php

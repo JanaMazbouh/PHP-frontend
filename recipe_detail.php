@@ -73,6 +73,10 @@ if(isset($_POST['add_single_wish'])){
     header("Location: recipe_detail.php?id_recipe=$id_recipe");
     exit();
 }
+
+
+// Add to history automatically when viewing
+mysqli_query($con, "INSERT INTO history (id_user, id_recipe) VALUES ('$id_user','$id_recipe')");
 ?>
 
 <!DOCTYPE html>

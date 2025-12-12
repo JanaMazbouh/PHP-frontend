@@ -14,6 +14,7 @@ $recipes = mysqli_query($con, $recipe_sql);
     <meta charset="UTF-8">
     <title>Home | Smart Pantry Chef</title>
     <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
 
@@ -30,11 +31,12 @@ $recipes = mysqli_query($con, $recipe_sql);
             <a href="mood.php">Mood</a>
             <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
+                 <a href="logout.php">Logout</a>
         </nav>
     </header>
 
     <hr>
-
+<a href="update.php">Update Your Information</a>
     <h1>Discover Delicious Recipes</h1>
 
     <h3>Categories</h3>
@@ -43,7 +45,7 @@ $recipes = mysqli_query($con, $recipe_sql);
         if(mysqli_num_rows($categories) > 0){
             while($cat = mysqli_fetch_assoc($categories)){
         ?>
-            <a href="categories.php?cat_id=<?php echo $cat['id_category']; ?>">
+            <a href="recipes.php?id_category=<?php echo $cat['id_category']; ?>">
                 <button><?php echo $cat['name_category']; ?></button>
             </a>
         <?php
@@ -73,13 +75,9 @@ $recipes = mysqli_query($con, $recipe_sql);
                 <img src="Image project/<?php echo $row['image']; ?>" 
                      alt="<?php echo $row['name_recipe']; ?>" 
                      style="width:100%; height:150px; object-fit:cover;">
-
-                <!-- Add to Favorite -->
-                <a href="favorite.php?id_recipe=<?php echo $row['id_recipe']; ?>">❤️</a>
-
-                <!-- Add to History -->
-                <a href="history.php?id_recipe=<?php echo $row['id_recipe']; ?>">👁️</a><br>
-
+<a href="favorite.php?id_recipe=<?php echo $row['id_recipe']; ?>" title="Add to Favorites">
+  <span class="material-symbols-outlined">favorite</span>
+</a>
                 <h4><?php echo $row['name_recipe']; ?></h4>
                 
                 <?php if($row['health_type'] == 1){ ?>
@@ -87,7 +85,7 @@ $recipes = mysqli_query($con, $recipe_sql);
                 <?php } ?>
 
                 <br><br>
-                <a href="recipe.php?id=<?php echo $row['id_recipe']; ?>">View Recipe</a>
+                <a href="recipe_detail.php?id_recipe=<?php echo $row['id_recipe']; ?>">View Recipe</a>
 
             </div>
         <?php

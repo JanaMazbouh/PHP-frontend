@@ -53,9 +53,6 @@ if(isset($_POST['login'])){
         <?php endif; ?>
 
         <input class="btn" type="submit" name="login" value="Login">
-        <p style="margin-top:10px;">
-    <a href="forgot_password.php" style="color:#d36a8a;">Forgot Password?</a>
-</p>
         <p>Don't have an account? <a href="signup.php" style="color:#d36a8a;">Register here</a></p>
 
      

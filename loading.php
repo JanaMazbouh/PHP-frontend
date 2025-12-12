@@ -69,7 +69,7 @@
 
         /* Dots */
         .loading {
-            margin-top: 30px;
+            margin-top: 40px;
             display: flex;
             gap: 10px;
         }

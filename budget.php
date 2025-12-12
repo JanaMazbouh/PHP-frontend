@@ -66,6 +66,7 @@ if (isset($_POST['save_budget'])) {
             <a href="mood.php">Mood</a>
             <a href="history.php">History</a>
             <a href="favorite.php">Favorites</a>
+              <a href="logout.php">Logout</a>
         </nav>
     </header>
 <hr>
