@@ -1,16 +1,19 @@
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
     background: linear-gradient(135deg, #fdf3f6 0%, #fce4ec 100%);
     color: black;
-    line-height: 1.6; 
+    line-height: 1.6;
 }
 
 header {
-    background-color: #fce4ec; 
+    background-color: #fce4ec;
     padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
@@ -33,7 +36,7 @@ header nav a {
 }
 
 header nav a:hover {
-    color: #c2185b; 
+    color: #c2185b;
 }
 
 .container {
@@ -44,24 +47,24 @@ header nav a:hover {
 
 h1 {
     text-align: center;
-    font-size: 32px; 
+    font-size: 32px;
     margin-bottom: 30px;
     font-weight: 600;
     color: #d63384;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .items-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 25px; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
 }
 
 .item-card {
     background: linear-gradient(145deg, #ffffff, #f9f9f9);
     border-radius: 15px;
-    padding: 20px; 
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     text-align: center;
     transition: all 0.3s ease;
     position: relative;
@@ -70,11 +73,11 @@ h1 {
 
 .item-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(240,123,143,0.3);
+    box-shadow: 0 12px 30px rgba(240, 123, 143, 0.3);
 }
 
 .item-card h3 {
-    font-size: 20px; 
+    font-size: 20px;
     font-weight: bold;
     margin: 15px 0;
     color: black;
@@ -105,7 +108,7 @@ h1 {
 }
 
 .item-card button {
-    padding: 12px 20px; 
+    padding: 12px 20px;
     border: none;
     border-radius: 25px;
     background: linear-gradient(135deg, #f07b8f, #d63384);
@@ -113,38 +116,44 @@ h1 {
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s ease;
-    box-shadow: 0 4px 12px rgba(240,123,143,0.4);
+    box-shadow: 0 4px 12px rgba(240, 123, 143, 0.4);
     margin-top: 15px;
 }
 
 .item-card button:hover {
     background: linear-gradient(135deg, #d63384, #c2185b);
-    box-shadow: 0 6px 16px rgba(240,123,143,0.6);
+    box-shadow: 0 6px 16px rgba(240, 123, 143, 0.6);
     transform: translateY(-2px);
 }
 
 footer {
-    background-color: #fce4ec; 
+    background-color: #fce4ec;
     text-align: center;
     padding: 15px 0;
     margin-top: 40px;
     color: #d63384;
     font-size: 14px;
 }
-@media (max-width: 1000px) {
-    .items-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
 }
 
-@media (max-width: 600px) {
-    .items-container {
-        grid-template-columns: 1fr;
-    }
-    .container {
-        padding: 20px;
-    }
-    h1 {
-        font-size: 28px;
-    }
+.item-card button {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s ease;
+    background-color: #b94666;
+    color: white;
+}
+
+.item-card button:hover {
+    background-color: #8e2f4b;
 }

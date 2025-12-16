@@ -8,21 +8,21 @@ if(!isset($_SESSION['id_user'])){
 }
 
 if(isset($_POST['submit'])){
-    $name = mysqli_real_escape_string($con, $_POST['name_recipe']);
-    $description = mysqli_real_escape_string($con, $_POST['description']);
-    $time_needed = mysqli_real_escape_string($con, $_POST['time_needed']);
+    $name = $_POST['name_recipe'];
+    $description =$_POST['description'];
+    $time_needed =$_POST['time_needed'];
     $calories = (int)$_POST['calories'];
-    $level = mysqli_real_escape_string($con, $_POST['level']);
+    $level =$_POST['level'];
     $id_category = (int)$_POST['id_category'];
     $rating = (int)$_POST['rating'];
 $serving = (int)$_POST['serving'];
 $id_meal = (int)$_POST['id_meal'];
-$health_type = mysqli_real_escape_string($con, $_POST['health_type']); 
+$health_type = $_POST['health_type']; 
 
    
     $image = "";
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
-        $image = basename($_FILES['image']['name']);
+        $image = basename($_FILES['image']['name']);//just name not path
         move_uploaded_file($_FILES['image']['tmp_name'], "Image project/".$image);
     }
 
