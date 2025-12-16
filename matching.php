@@ -1,102 +1,66 @@
 <?php
 session_start();
-include 'db.php'; 
+include 'db.php';
 
 if (!isset($_SESSION['id_user'])) {
     header("Location: login.php");
     exit;
 }
 
-function clean($s) {
-    return trim(htmlspecialchars($s, ENT_QUOTES, 'UTF-8'));
-}
-
 $results = [];
 $error = '';
+
 if (isset($_POST['submit'])) {
-    $raw_ingredients = isset($_POST['ingredients']) ? $_POST['ingredients'] : '';
-    $dietary = isset($_POST['dietary']) ? $_POST['dietary'] : []; // array of choices
 
-    $raw_ingredients = clean($raw_ingredients);
-    if ($raw_ingredients === '') {
-        $error = 'Please Enter At least One Ingredient';
+    $ingredientsText = trim($_POST['ingredients'] ?? '');
+
+    if ($ingredientsText === '') {
+        $error = 'Please enter at least one ingredient';
     } else {
+
+        // split ingredients
+        //array filter remove empty & null 
+        // array map done for all index of array 
+        // explode convert to array
+        $ingredients = array_filter(array_map('trim', explode(',', $ingredientsText)));
+
+    
+        $whereParts = [];
+        foreach ($ingredients as $ing) {
+            $ing = mysqli_real_escape_string($con, strtolower($ing));
+            $whereParts[] = "LOWER(i.name_ingredient) LIKE '%$ing%' ";
         
-        $parts = array_filter(array_map(function($i){ return mb_strtolower(trim($i)); }, explode(',', $raw_ingredients)));
-        $parts = array_values(array_unique($parts));
-
-        if (count($parts) === 0) {
-            $error = 'No Ingredient was Recognized.Please make sure their are separated by (,)';
-        } else {
-            
-            $escaped_parts = array_map(function($p) use ($con) {
-                return mysqli_real_escape_string($con, $p);
-            }, $parts);
-            $sql = "SELECT id_ingredient, LOWER(name_ingredient) as name_ingredient FROM ingredient WHERE LOWER(name_ingredient) IN ('".implode("','", $escaped_parts)."')";
-            $res=mysqli_query($con, $sql);
-                $ingredient_ids = [];  
-        while ($row = mysqli_fetch_assoc($res)) {
-                    $ingredient_ids[] =$row['id_ingredient'];
-                }
-            
-
-               
-                if (count($ingredient_ids) === 0) {
-                    $ingredient_ids = [];
-                    foreach ($parts as $p) {
-                        $p2= mysqli_real_escape_string($con, $p);
-                        $likeSql = "SELECT id_ingredient FROM ingredient WHERE LOWER(name_ingredient) LIKE '%$p2%'";
-                        $s=mysqli_query($con, $likeSql);
-                        while ($row = mysqli_fetch_assoc($s)) {
-                            $ingredient_ids[] =$row['id_ingredient'];
-                        }
-                    }
-                    $ingredient_ids = array_values(array_unique($ingredient_ids));
-                }
-
-                if (count($ingredient_ids) === 0) {
-                    $error = 'I couldn`t find any matching ingredient';
-                } else {
-                    $dietWhere = "";
-                    if (!empty($dietary)) {
-                       
-                        $map = [
-                            'Vegetarian' => "r.health_type IN ('healthy','regular')",
-                            'Vegan' => "r.health_type = 'healthy'", 
-                            'Gluten-Free' => "", 
-                            'Low-Carb' => ""
-                        ];
-                        $partsDietWhere = [];
-                        foreach ($dietary as $d) {
-                            if (!empty($map[$d])) $partsDietWhere[] = $map[$d];
-                        }
-                        if (!empty($partsDietWhere)) {
-                            $dietWhere = " AND (" . implode(" OR ", $partsDietWhere) . ") ";
-                        }
-                        $ids_safe = array_map('intval', $ingredient_ids);
-                        $inlist = implode(',', $ids_safe);
-                    }$sqlRecipes = "
-                        SELECT r.id_recipe, r.name_recipe, r.description, r.image, r.time_needed,COUNT(ri.id_recipe_ingre) AS matches
-                        FROM recipes r
-                        JOIN recipes_ingredient ri ON ri.id_recipe = r.id_recipe
-                        WHERE ri.id_ingredient IN ($inlist)
-                        $dietWhere
-                        GROUP BY r.id_recipe
-                        ORDER BY matches DESC, r.name_recipe ASC
-                        LIMIT 100
-                    ";
-                   
-                    $sq=mysqli_query($con, $sqlRecipes);  
-                    
-                        while ($row = mysqli_fetch_assoc($sq)) {
-                            $results[] = $row;
-                        }
-                }
-                }
-            }
         }
 
+        $whereSql = implode(' OR ', $whereParts);
+
+        
+        $sql = "
+            SELECT 
+                r.id_recipe,
+                r.name_recipe,
+                r.description,
+                r.image,
+                r.time_needed,
+                COUNT(DISTINCT i.id_ingredient) AS matches
+            FROM recipes r
+            JOIN recipes_ingredient ri ON r.id_recipe = ri.id_recipe
+            JOIN ingredient i ON ri.id_ingredient = i.id_ingredient
+            WHERE ($whereSql)
+            GROUP BY r.id_recipe
+            ORDER BY matches DESC, r.name_recipe
+            LIMIT 50
+        ";
+
+        $q = mysqli_query($con, $sql);
+
+        while ($row = mysqli_fetch_assoc($q)) {
+            $results[] = $row;
+        }
+    }
+}
 ?>
+
 <!doctype html>
 <html lang="ar">
 <head>
@@ -139,12 +103,8 @@ if (isset($_POST['submit'])) {
 
             <form method="post">
                 <label for="ingredients">Enter your ingredients (separated by commas):</label>
-                <textarea id="ingredients" name="ingredients" placeholder="e.g., chicken, rice, tomatoes, garlic, onions, bell peppers..."><?= isset($_POST['ingredients']) ? htmlspecialchars($_POST['ingredients']) : '' ?></textarea><div class="diet">
-                    <label>Dietary Preferences:</label><label><input type="checkbox" name="dietary[]" value="Vegetarian" <?= (isset($_POST['dietary']) && in_array('Vegetarian', $_POST['dietary']))? 'checked':'' ?>> Vegetarian</label>
-                    <label><input type="checkbox" name="dietary[]" value="Vegan" <?= (isset($_POST['dietary']) && in_array('Vegan', $_POST['dietary']))? 'checked':'' ?>> Vegan</label>
-                    <label><input type="checkbox" name="dietary[]" value="Gluten-Free" <?= (isset($_POST['dietary']) && in_array('Gluten-Free', $_POST['dietary']))? 'checked':'' ?>> Gluten-Free</label>
-                    <label><input type="checkbox" name="dietary[]" value="Low-Carb" <?= (isset($_POST['dietary']) && in_array('Low-Carb', $_POST['dietary']))? 'checked':'' ?>> Low-Carb</label>
-                </div>
+                <textarea id="ingredients" name="ingredients" placeholder="e.g., chicken, rice, tomatoes, garlic, onions, bell peppers..."><?= htmlspecialchars($_POST['ingredients'] ?? '') ?></textarea>
+            
 
                 <button type="submit" class="btn" name="submit">Find Matching Recipes</button>
             </form>

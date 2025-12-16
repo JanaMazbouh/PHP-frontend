@@ -47,17 +47,17 @@ $row=mysqli_fetch_array($result);
         <h2>What do you want to cook today?</h2>
 <div class="con">
     <a href="categories.php?id_meal=1" class="card">
-        <div class="icon">🍳</div>
+   <img src="Image project\breakfast.gif" alt="foo" width="100" height="100">
         <p>Breakfast</p>
     </a>
 
     <a href="categories.php?id_meal=2" class="card">
-        <div class="icon">🍽️</div>
+       <img src="Image project\lunch.gif" alt="foo" width="100" height="100"> 
         <p>Lunch</p>
     </a>
 
     <a href="categories.php?id_meal=3" class="card">
-        <div class="icon">🌙</div>
+        <img src="Image project\dinner.gif" alt="foo" width="100" height="100">
         <p>Dinner</p>
     </a>
 

@@ -8,42 +8,45 @@ if (!isset($_SESSION['id_user'])) {
 }
 
 $user_id = $_SESSION['id_user'];
-$budget = 40; // default in USD
-$grocery_cost = 0;
-$saving = 0;
+$budget = 20; // default USD
 $recommendations = [];
 
+$conversion_rate = 90000; // USD -> LBP
+
 if (isset($_POST['save_budget'])) {
-    $budget = $_POST['amount'];
 
-
-    $conversion_rate = 90000; // 1 USD = 90,000 LBP
+    $budget = (float)$_POST['amount'];
     $budget_lbp = $budget * $conversion_rate;
+    $weekly_budget = $budget_lbp * 7;
 
-    $sql = "INSERT INTO budget (id_user, amount, date)  
-            VALUES ('$user_id', '$budget', CURDATE())";
-    mysqli_query($con, $sql);
+    // save budget (optional)
+    mysqli_query($con, "
+        INSERT INTO budget (id_user, amount, date)
+        VALUES ('$user_id', '$budget', CURDATE())
+    ");
 
-    $sql = "SELECT r.id_recipe, r.name_recipe, r.image,
+    // get recipe costs
+    $sql = "
+        SELECT 
+            r.id_recipe,
+            r.name_recipe,
+            r.image,
             SUM(s.price) AS total_price
-            FROM recipes r
-            JOIN recipes_ingredient ri ON r.id_recipe = ri.id_recipe
-            JOIN supermarket s ON ri.id_ingredient = s.id_ingredient
-            GROUP BY r.id_recipe";
+        FROM recipes r
+        JOIN recipes_ingredient ri ON r.id_recipe = ri.id_recipe
+        JOIN supermarket s ON ri.id_ingredient = s.id_ingredient
+        GROUP BY r.id_recipe
+        HAVING total_price <= $budget_lbp
+        ORDER BY total_price ASC
+    ";
+
     $result = mysqli_query($con, $sql);
-
-    while($row=mysqli_fetch_assoc($result)) {
-        
-        if ($row['total_price'] <= ($budget_lbp * 7)) {
-            $recommendations[] = $row;
-        }
+    while ($row = mysqli_fetch_assoc($result)) {
+        $recommendations[] = $row;
     }
-
-
-    $grocery_cost = $budget_lbp * 1.18;
-    $saving = ($budget_lbp * 2) - $grocery_cost;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,7 +60,8 @@ if (isset($_POST['save_budget'])) {
 <div class="container">
     <header>
         <nav class="navbar">
-         <a href="logout.php">       <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;"> </a> 
+         <a href="logout.php">      
+             <img src="logo.png" alt="Smart Pantry Chef" style="width:100px;height:auto;margin:0;padding:0;display:block;"> </a> 
             <a href="home.php">Home</a>
             <a href="meals.php">Meals</a>
             <a href="categories.php">Categories</a>
@@ -87,12 +91,12 @@ if (isset($_POST['save_budget'])) {
                 (<?php echo number_format($budget * 90000, 0); ?> LBP)
             </p>
 
-            <input type="range" min="15" max="60" value="<?php echo $budget; ?>" id="rangeInput" name="amount">
+            <input type="range" min="5" max="25" value="<?php echo $budget; ?>" id="rangeInput" name="amount">
             <div class="labels">
+                <span>$5/day (<?php echo number_format(5 * 90000, 0); ?> LBP)</span>
+                <span>$10/day (<?php echo number_format(10 * 90000, 0); ?> LBP)</span>
                 <span>$15/day (<?php echo number_format(15 * 90000, 0); ?> LBP)</span>
                 <span>$25/day (<?php echo number_format(25 * 90000, 0); ?> LBP)</span>
-                <span>$40/day (<?php echo number_format(40 * 90000, 0); ?> LBP)</span>
-                <span>$60/day (<?php echo number_format(60 * 90000, 0); ?> LBP)</span>
             </div>
         </div>
 
@@ -108,53 +112,46 @@ if (isset($_POST['save_budget'])) {
     </form>
 
     <?php if (!empty($recommendations)) { ?>
-    <div class="results">
+<div class="results">
 
-        <h3>Budget Breakdown</h3>
+    <h3>Your Budget Summary</h3>
 
-        <div class="box-group">
-            <div class="box">
-                <h4>Meal Plan Total</h4>
-                <p>
-                    <?php echo number_format($budget_lbp * 7, 0); ?> LBP / week <br>
-                    (~$<?php echo number_format(($budget_lbp * 7) / 90000, 2); ?>)
-                </p>
-            </div>
-
-            <div class="box">
-                <h4>Grocery Cost</h4>
-                <p>
-                    <?php echo number_format($grocery_cost, 0); ?> LBP <br>
-                    (~$<?php echo number_format($grocery_cost / 90000, 2); ?>)
-                </p>
-            </div>
-
-            <div class="box">
-                <h4>You Save</h4>
-                <p>
-                    <?php echo number_format($saving, 0); ?> LBP <br>
-                    (~$<?php echo number_format($saving / 90000, 2); ?>)
-                </p>
-            </div>
+    <div class="box-group">
+        <div class="box">
+            <h4>Daily Budget</h4>
+            <p>
+                $<?php echo number_format($budget, 2); ?> <br>
+                (<?php echo number_format($budget * 90000, 0); ?> LBP)
+            </p>
         </div>
 
-        <h3>Recommended Meals Within Budget</h3>
-
-        <div class="cards">
-            <?php foreach ($recommendations as $r) { ?>
-            <div class="card">
-                <img src="Image project/<?php echo htmlspecialchars($r['image']); ?>">
-                <h4><?php echo $r['name_recipe']; ?></h4>
-                <p>
-                    Estimated Cost: <?php echo number_format($r['total_price'], 0); ?> LBP <br>
-                    (~$<?php echo number_format($r['total_price'] / 90000, 2); ?>)
-                </p>
-            </div>
-            <?php } ?>
+        <div class="box">
+            <h4>Weekly Budget</h4>
+            <p>
+                <?php echo number_format($budget_lbp * 7, 0); ?> LBP <br>
+                (~$<?php echo number_format(($budget_lbp * 7) / 90000, 2); ?>)
+            </p>
         </div>
-
     </div>
-    <?php } ?>
+
+    <h3>Meals Within Your Budget</h3>
+
+    <div class="cards">
+        <?php foreach ($recommendations as $r) { ?>
+        <div class="card">
+            <img src="Image project/<?php echo htmlspecialchars($r['image']); ?>">
+            <h4><?php echo htmlspecialchars($r['name_recipe']); ?></h4>
+            <p>
+                Estimated Cost: <?php echo number_format($r['total_price'], 0); ?> LBP <br>
+                (~$<?php echo number_format($r['total_price'] / 90000, 2); ?>)
+            </p>
+        </div>
+        <?php } ?>
+    </div>
+
+</div>
+<?php } ?>
+
 
 </div>
 <script>

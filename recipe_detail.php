@@ -70,7 +70,6 @@ if(isset($_POST['add_to_wishlist'])){
     exit();
 }
 
-
 if(isset($_POST['add_single_wish'])){
     $id_item = (int)$_POST['single_id_item'];
     $check = mysqli_query($con, "SELECT * FROM wishlist WHERE id_user='$id_user' AND id_item='$id_item'");
