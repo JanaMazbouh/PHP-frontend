@@ -10,17 +10,20 @@ if(!isset($_SESSION['id_user'])){
 $id_user = $_SESSION['id_user'];
 $id_recipe = isset($_GET['from_recipe']) ? (int)$_GET['from_recipe'] : 0;
 
-if (!isset($_SESSION['extra_ingredients'])) {
-    $_SESSION['extra_ingredients'] = [];
+// Initialize extra ingredients per recipe
+if (!isset($_SESSION['extra_ingredients'][$id_recipe])) {
+    $_SESSION['extra_ingredients'][$id_recipe] = [];
 }
 
+// Add extra ingredient to the correct recipe
 if(isset($_POST['add_extra'])){
     $id_item = (int)$_POST['id_item'];
     $name = mysqli_real_escape_string($con, $_POST['name_ingredient']);
-    $_SESSION['extra_ingredients'][$id_item] = $name;
-        header("Location: recipe_detail.php?id_recipe=$id_recipe");
-        exit();
-    
+
+    $_SESSION['extra_ingredients'][$id_recipe][$id_item] = $name;
+
+    header("Location: recipe_detail.php?id_recipe=$id_recipe");
+    exit();
 }
 
 $supermarketQuery = "
@@ -60,26 +63,14 @@ $supermarketResult = mysqli_query($con, $supermarketQuery);
             echo "<div class='item-card'>
                     <h3>".$item['name_ingredient']."</h3>
                     <p>Price: ".$item['price']." / ".$item['unit']."</p>
-                    <div class='quantity' style='text-align:center; margin-bottom:10px;'>
-                        <label for='quantity_".$item['id_item']."' style='font-size:12px;'>Qty:</label>
-                        <input type='number' id='quantity_".$item['id_item']."' name='quantity'
-                               value='1' min='1' max='99'
-                               style='width:50px; height:28px; font-size:12px;'>
-                    </div>";
-
-           
-            echo "<div class='button-group'>";
-   
-           
-                echo "<form method='post'>
-                        <input type='hidden' name='id_item' value='".$item['id_item']."'>
-                        <input type='hidden' name='name_ingredient' value='".$item['name_ingredient']."'>
-                        <button type='submit' name='add_extra'>Add to Recipe</button>
-                      </form>";
-            
-
-            echo "</div>"; 
-            echo "</div>"; 
+                    <div class='button-group'>
+                        <form method='post'>
+                            <input type='hidden' name='id_item' value='".$item['id_item']."'>
+                            <input type='hidden' name='name_ingredient' value='".$item['name_ingredient']."'>
+                            <button type='submit' name='add_extra'>Add to Recipe</button>
+                        </form>
+                    </div>
+                  </div>";
         }
     } else {
         echo "<p style='text-align:center;color:#777;font-size:18px;'>No items found.</p>";

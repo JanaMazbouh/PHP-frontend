@@ -16,27 +16,25 @@ if(!isset($_GET['id_recipe'])){
 
 $id_recipe = (int)$_GET['id_recipe'];
 
-
-if (!isset($_SESSION['extra_ingredients'])) {
-    $_SESSION['extra_ingredients'] = [];
+/* ================= hon ing  ================= */
+if (!isset($_SESSION['extra_ingredients'][$id_recipe])) {
+    $_SESSION['extra_ingredients'][$id_recipe] = [];
 }
 
 if (isset($_GET['remove_extra'])) {
     $remove_id = (int)$_GET['remove_extra'];
-    unset($_SESSION['extra_ingredients'][$remove_id]);
+    unset($_SESSION['extra_ingredients'][$id_recipe][$remove_id]);
     header("Location: recipe_detail.php?id_recipe=$id_recipe");
     exit();
 }
 
-
-
+/* ================= rec+ing================= */
 $recipeQuery = mysqli_query($con, "SELECT * FROM recipes WHERE id_recipe='$id_recipe'");
 if(!$recipeQuery || mysqli_num_rows($recipeQuery) == 0){
     echo "Recipe not found.";
     exit();
 }
 $recipe = mysqli_fetch_assoc($recipeQuery);
-
 
 $ingredientQuery = mysqli_query($con, "
     SELECT i.id_ingredient, i.name_ingredient, ri.quantity
@@ -50,9 +48,11 @@ while($ing = mysqli_fetch_assoc($ingredientQuery)){
     $ingredients[] = $ing;
 }
 
+/* ================= zed 3al cart ================= */
 if(isset($_POST['add_to_cart'])){
     mysqli_query($con, "DELETE FROM cart WHERE id_user='$id_user'");
 
+    // zedon 3al reci
     foreach($ingredients as $ing){
         $id_ingredient = (int)$ing['id_ingredient'];
         $q = mysqli_query($con, "SELECT id_item FROM supermarket WHERE id_ingredient='$id_ingredient' LIMIT 1");
@@ -61,10 +61,13 @@ if(isset($_POST['add_to_cart'])){
         }
     }
 
-    foreach($_SESSION['extra_ingredients'] as $extra_id => $name){
-        $q = mysqli_query($con, "SELECT id_item FROM supermarket WHERE id_ingredient='$extra_id' LIMIT 1");
-        if($row = mysqli_fetch_assoc($q)){
-            mysqli_query($con, "INSERT INTO cart (id_user,id_item,quantity) VALUES ('$id_user','".$row['id_item']."',1)");
+    // hon bas 3al recipe bzed extra inge
+    if (!empty($_SESSION['extra_ingredients'][$id_recipe])) {
+        foreach($_SESSION['extra_ingredients'][$id_recipe] as $extra_id => $name){
+            $q = mysqli_query($con, "SELECT id_item FROM supermarket WHERE id_ingredient='$extra_id' LIMIT 1");
+            if($row = mysqli_fetch_assoc($q)){
+                mysqli_query($con, "INSERT INTO cart (id_user,id_item,quantity) VALUES ('$id_user','".$row['id_item']."',1)");
+            }
         }
     }
 
@@ -72,7 +75,7 @@ if(isset($_POST['add_to_cart'])){
     exit();
 }
 
-
+/* ================= 3al wishlist ================= */
 if(isset($_POST['add_single_wish'])){
     $id_item = (int)$_POST['single_id_item'];
     $check = mysqli_query($con, "SELECT * FROM wishlist WHERE id_user='$id_user' AND id_item='$id_item'");
@@ -82,6 +85,7 @@ if(isset($_POST['add_single_wish'])){
     header("Location: recipe_detail.php?id_recipe=$id_recipe");
     exit();
 }
+
 
 mysqli_query($con, "INSERT INTO history (id_user,id_recipe) VALUES ('$id_user','$id_recipe')");
 ?>
@@ -122,6 +126,7 @@ mysqli_query($con, "INSERT INTO history (id_user,id_recipe) VALUES ('$id_user','
     <div class="ingredients">
         <h3>Ingredients:</h3>
         <ul>
+       
         <?php foreach($ingredients as $ing): ?>
             <li>
                 <span><?php echo $ing['quantity']." of ".$ing['name_ingredient']; ?></span>
@@ -135,8 +140,10 @@ mysqli_query($con, "INSERT INTO history (id_user,id_recipe) VALUES ('$id_user','
                 </div>
             </li>
         <?php endforeach; ?>
-        <?php if(!empty($_SESSION['extra_ingredients'])): ?>
-            <?php foreach($_SESSION['extra_ingredients'] as $id => $name): ?>
+
+        <!-- hon ing  lal recipe -->
+        <?php if(!empty($_SESSION['extra_ingredients'][$id_recipe])): ?>
+            <?php foreach($_SESSION['extra_ingredients'][$id_recipe] as $id => $name): ?>
                 <li>
                     <span><?php echo $name; ?></span>
                     <div class="ingredient-actions">
